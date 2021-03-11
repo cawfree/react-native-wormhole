@@ -9,7 +9,7 @@ export default function App() {
   return (
     <Wormholes>
       <View style={styles.container}>
-        <Wormhole uri={`http://${localhost}:${PORT}`} />
+        <Wormhole uri={`http://${localhost}:${PORT}/hello`} />
       </View>
     </Wormholes>
   );
