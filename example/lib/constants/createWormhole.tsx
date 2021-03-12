@@ -5,8 +5,12 @@ import { Wormhole as BaseWormhole } from '../components';
 
 export default function createWormhole<T extends object>({
   global,
+  verify,
 }: WormholeContextValue<T>) {
-  const defaultValue: WormholeContextValue<T> = Object.freeze({ global });
+  const defaultValue: WormholeContextValue<T> = Object.freeze({
+    global,
+    verify,
+  });
   const Context = React.createContext<WormholeContextValue<T>>(
     defaultValue
   );

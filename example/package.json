@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "axios": "^0.21.1",
+    "ethers": "^5.0.32",
     "expo": "~40.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
