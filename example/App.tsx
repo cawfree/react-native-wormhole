@@ -1,17 +1,30 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import * as React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import localhost from 'react-native-localhost';
 import { PORT } from '@env';
 
-import Wormholes, { Wormhole } from './lib';
+import { createWormhole } from './lib';
+
+// @ts-ignore
+const modules = require.getModules();
+
+const { Wormhole, Provider } = createWormhole({ global: {
+  React,
+  require: (id: string) => {
+    if (id === 'react-native') {
+      return require('react-native');
+    }
+    return null;
+  },
+} });
 
 export default function App() {
   return (
-    <Wormholes>
+    <Provider>
       <View style={styles.container}>
         <Wormhole uri={`http://${localhost}:${PORT}/hello`} />
       </View>
-    </Wormholes>
+    </Provider>
   );
 }
 
