@@ -28,6 +28,7 @@ const serveFixture = (scriptName: string) => async (
     express()
       .use(cors({ exposedHeaders: 'X-Csrf-Token' }))
       .get('/hello', serveFixture('Hello.js'))
+      .get('/stateful', serveFixture('Stateful.js'))
       .listen(process.env.PORT, () => resolve(Number.parseInt(process.env.PORT)))
   });
   console.log(`listening on ${port}`);

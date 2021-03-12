@@ -4,6 +4,7 @@ import localhost from 'react-native-localhost';
 import { PORT, SIGNER_ADDRESS } from '@env';
 import interopRequireDefault from '@babel/runtime/helpers/interopRequireDefault';
 import interopRequireWildcard from '@babel/runtime/helpers/interopRequireWildcard';
+import slicedToArray from '@babel/runtime/helpers/slicedToArray';
 import { ethers } from 'ethers';
 
 import { createWormhole } from './lib';
@@ -20,6 +21,8 @@ const { Wormhole, Provider: Wormholes } = createWormhole({
         return interopRequireWildcard;
       } else if (id === '@babel/runtime/helpers/interopRequireDefault') {
         return interopRequireDefault;
+      } else if (id === '@babel/runtime/helpers/slicedToArray') {
+        return slicedToArray;
       }
       return null;
     },
@@ -41,6 +44,7 @@ export default function App() {
     <Wormholes>
       <View style={styles.container}>
         <Wormhole source={{ uri: `http://${localhost}:${PORT}/hello` }} />
+        <Wormhole source={{ uri: `http://${localhost}:${PORT}/stateful` }} />
         <Wormhole source={'var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard");Object.defineProperty(exports,"__esModule",{value:true});exports.default=ExamplePlugin;var React=_interopRequireWildcard(require("react"));var _reactNative=require("react-native");var _jsxFileName="/Users/cawfree/Development/react-native-wormhole/example/fixtures/Hello.jsx";function ExamplePlugin(){return React.createElement(_reactNative.Text,{__self:this,__source:{fileName:_jsxFileName,lineNumber:5,columnNumber:10}},"I am a string!");}'} />
         <Wormhole
           source={{ uri: `http://${localhost}:${PORT}/hello2` }}
