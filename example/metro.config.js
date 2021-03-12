@@ -7,6 +7,8 @@ module.exports = {
      asyncRequireModulePath: require.resolve(
        'metro-runtime/src/modules/asyncRequire',
      ),
-    allowOptionalDependencies: true,
+     inlineRequires: true,
+     experimentalImportSupport: true,
+     allowOptionalDependencies: true,
   },
 };

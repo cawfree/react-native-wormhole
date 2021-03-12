@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import localhost from 'react-native-localhost';
 import { PORT } from '@env';
+import interopRequireDefault from '@babel/runtime/helpers/interopRequireDefault';
+import interopRequireWildcard from '@babel/runtime/helpers/interopRequireWildcard';
+
 
 import { createWormhole } from './lib';
 
@@ -13,6 +16,12 @@ const { Wormhole, Provider } = createWormhole({ global: {
   require: (id: string) => {
     if (id === 'react-native') {
       return require('react-native');
+    } else if (id === 'react') {
+      return require('react');
+    } else if (id === '@babel/runtime/helpers/interopRequireWildcard') {
+      return interopRequireWildcard;
+    } else if (id === '@babel/runtime/helpers/interopRequireDefault') {
+      return interopRequireDefault;
     }
     return null;
   },

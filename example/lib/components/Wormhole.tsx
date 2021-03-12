@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Text } from 'react-native';
 import axios from 'axios';
 import { WormholeContextValue } from '../@types';
 
@@ -23,29 +22,27 @@ export default function Wormhole<T extends object>({
 
   React.useEffect(() => {
     (async () => {
-      const data = `
-      async function() {
-        const { Text } = require('react-native');
-        return Text;
-      }
-      `.trim();
-      const nextComponent = await new Function(
-        globalName,
-        `
+      const { data } = await axios({
+        url: uri,
+        method: 'get',
+      });
+      const src = `
 // Global Context 
 ${Object.keys(global).map((key) => `var ${key} = ${globalName}.${key};`).join('\n')}
 
-// User Scripts
-return (${data})();
-        `,
-      )(global);
+const exports = {};
+${data}
+
+return exports.default;
+      `.trim();
+      console.log(src);
+      const nextComponent = await new Function(globalName, src)(global);
       setComponent(nextComponent);
     })();
   }, [uri, global, globalName, setComponent]);
 
   if (Component) {
-    return <Component>helloooo</Component>;
-    return <Component {...extras} />;
+    return Component;
   } else if (typeof renderLoading === 'function') {
     return renderLoading();
   }
