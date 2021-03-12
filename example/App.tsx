@@ -45,7 +45,10 @@ export default function App() {
       <View style={styles.container}>
         <Wormhole source={{ uri: `http://${localhost}:${PORT}/hello` }} />
         <Wormhole source={{ uri: `http://${localhost}:${PORT}/stateful` }} />
-        <Wormhole source={'var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard");Object.defineProperty(exports,"__esModule",{value:true});exports.default=ExamplePlugin;var React=_interopRequireWildcard(require("react"));var _reactNative=require("react-native");var _jsxFileName="/Users/cawfree/Development/react-native-wormhole/example/fixtures/Hello.jsx";function ExamplePlugin(){return React.createElement(_reactNative.Text,{__self:this,__source:{fileName:_jsxFileName,lineNumber:5,columnNumber:10}},"I am a string!");}'} />
+        <Wormhole
+          dangerouslySetInnerJSX
+          source={'var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard");Object.defineProperty(exports,"__esModule",{value:true});exports.default=ExamplePlugin;var React=_interopRequireWildcard(require("react"));var _reactNative=require("react-native");var _jsxFileName="/Users/cawfree/Development/react-native-wormhole/example/fixtures/Hello.jsx";function ExamplePlugin(){return React.createElement(_reactNative.Text,{__self:this,__source:{fileName:_jsxFileName,lineNumber:5,columnNumber:10}},"I am a string!");}'}
+        />
         <Wormhole
           source={{ uri: `http://${localhost}:${PORT}/hello2` }}
           renderError={({ error }) => <Text>{`${error.message}`}</Text>}

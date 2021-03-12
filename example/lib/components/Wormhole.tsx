@@ -9,6 +9,7 @@ export type WormholeProps<T extends object> = {
   readonly useWormhole: () => WormholeContextValue<T>;
   readonly renderLoading?: () => JSX.Element;
   readonly renderError?: (props: { readonly error: Error }) => JSX.Element;
+  readonly dangerouslySetInnerJSX?: boolean;
 };
 
 export default function Wormhole<T extends object>({
@@ -16,6 +17,7 @@ export default function Wormhole<T extends object>({
   useWormhole,
   renderLoading = () => <React.Fragment />,
   renderError = () => <React.Fragment />,
+  dangerouslySetInnerJSX = false,
   ...extras
 }: WormholeProps<T>): JSX.Element {
   const { open } = useWormhole();
@@ -25,7 +27,7 @@ export default function Wormhole<T extends object>({
   React.useEffect(() => {
     (async () => {
       try {
-        const Component = await open(source);
+        const Component = await open(source, { dangerouslySetInnerJSX });
         return setComponent(() => Component);
       } catch (e) {
         setComponent(() => null);
@@ -33,7 +35,7 @@ export default function Wormhole<T extends object>({
         return forceUpdate();
       }
     })();
-  }, [open, source, setComponent, forceUpdate, setError]);
+  }, [open, source, setComponent, forceUpdate, setError, dangerouslySetInnerJSX]);
   const FallbackComponent = React.useCallback((): JSX.Element => {
     return renderError({ error: new Error('[Wormhole]: Failed to render.') });
   }, [renderError]);

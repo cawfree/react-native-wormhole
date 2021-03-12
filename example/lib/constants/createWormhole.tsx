@@ -6,6 +6,7 @@ import {
   WormholeContextConfig,
   WormholeContextValue,
   WormholeSource,
+  WormholeOptions,
 } from '../@types';
 
 import { Wormhole as BaseWormhole } from '../components';
@@ -108,9 +109,15 @@ function createProvider<T extends object>(
       return shouldCreateComponent(src);
     }, [shouldCreateComponent]);
     const open = React.useCallback(
-      async (source: WormholeSource) => {
+      async (source: WormholeSource, options: WormholeOptions) => {
+        const { dangerouslySetInnerJSX } = options;
         if (typeof source === 'string') {
-          return openString(source as string);
+          if (dangerouslySetInnerJSX === true) {
+            return openString(source as string);
+          }
+          throw new Error(
+            `[Wormhole]: Attempted to instantiate a Wormhole using a string, but dangerouslySetInnerJSX was not true.`
+          );
         } else if (source && typeof source === 'object') {
           const { uri } = source;
           if (typeof uri === 'string') {
