@@ -26,23 +26,16 @@ export default function Wormhole<T extends object>({
         url: uri,
         method: 'get',
       });
-      const src = `
-// Global Context 
-${Object.keys(global).map((key) => `var ${key} = ${globalName}.${key};`).join('\n')}
-
-const exports = {};
-${data}
-
-return exports.default;
-      `.trim();
-      console.log(src);
-      const nextComponent = await new Function(globalName, src)(global);
-      setComponent(nextComponent);
+      const nextComponent = await new Function(
+        globalName,
+        `${Object.keys(global).map((key) => `var ${key} = ${globalName}.${key};`).join('\n')}; const exports = {}; ${data}; return exports.default;`
+      )(global);
+      setComponent(() => nextComponent);
     })();
   }, [uri, global, globalName, setComponent]);
 
   if (Component) {
-    return Component;
+    return <Component />;
   } else if (typeof renderLoading === 'function') {
     return renderLoading();
   }
