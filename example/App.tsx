@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import localhost from 'react-native-localhost';
 import { PORT, SIGNER_ADDRESS } from '@env';
 import interopRequireDefault from '@babel/runtime/helpers/interopRequireDefault';
@@ -8,9 +8,6 @@ import { ethers } from 'ethers';
 
 import { createWormhole } from './lib';
 import { AxiosResponse } from 'axios';
-
-// @ts-ignore
-//const modules = require.getModules();
 
 const { Wormhole, Provider: Wormholes } = createWormhole({
   global: {
@@ -43,7 +40,12 @@ export default function App() {
   return (
     <Wormholes>
       <View style={styles.container}>
-        <Wormhole uri={`http://localhost:${PORT}/hello`} />
+        <Wormhole source={{ uri: `http://${localhost}:${PORT}/hello` }} />
+        <Wormhole source={'var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard");Object.defineProperty(exports,"__esModule",{value:true});exports.default=ExamplePlugin;var React=_interopRequireWildcard(require("react"));var _reactNative=require("react-native");var _jsxFileName="/Users/cawfree/Development/react-native-wormhole/example/fixtures/Hello.jsx";function ExamplePlugin(){return React.createElement(_reactNative.Text,{__self:this,__source:{fileName:_jsxFileName,lineNumber:5,columnNumber:10}},"I am a string!");}'} />
+        <Wormhole
+          source={{ uri: `http://${localhost}:${PORT}/hello2` }}
+          renderError={({ error }) => <Text>{`${error.message}`}</Text>}
+        />
       </View>
     </Wormholes>
   );

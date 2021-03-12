@@ -1,55 +1,50 @@
 import * as React from 'react';
-import axios from 'axios';
-import { WormholeContextValue } from '../@types';
+import { ErrorBoundary } from 'react-error-boundary'
 
-// and what dependencies? defined by content?
+import { WormholeContextValue, WormholeSource } from '../@types';
+import { useForceUpdate } from '../hooks';
+
 export type WormholeProps<T extends object> = {
-  readonly uri: string;
+  readonly source: WormholeSource;
   readonly useWormhole: () => WormholeContextValue<T>;
   readonly renderLoading?: () => JSX.Element;
+  readonly renderError?: (props: { readonly error: Error }) => JSX.Element;
 };
 
-const globalName = '__WORMHOLE__';
-
 export default function Wormhole<T extends object>({
-  uri,
+  source,
   useWormhole,
-  renderLoading,
+  renderLoading = () => <React.Fragment />,
+  renderError = () => <React.Fragment />,
   ...extras
 }: WormholeProps<T>): JSX.Element {
-  const { global, verify } = useWormhole();
+  const { open } = useWormhole();
+  const { forceUpdate } = useForceUpdate();
   const [Component, setComponent] = React.useState(null);
-
+  const [error, setError] = React.useState<Error | null>(null);
   React.useEffect(() => {
     (async () => {
       try {
-        const response = await axios({
-          url: uri,
-          method: 'get',
-        });
-        if (await verify(response)) {
-          const { data } = response;
-          const nextComponent = await new Function(
-            globalName,
-            `${Object.keys(global).map((key) => `var ${key} = ${globalName}.${key};`).join('\n')}; const exports = {}; ${data}; return exports.default;`
-          )(global);
-          if (typeof nextComponent !== 'function') {
-            throw new Error(`Expected function, encountered ${typeof nextComponent}.`);
-          }
-          return setComponent(() => nextComponent);
-        }
-        throw new Error(`[Wormhole]: Failed to verify "${uri}".`);
+        const Component = await open(source);
+        return setComponent(() => Component);
       } catch (e) {
-        // TODO: handle somehow
-        console.error(e);
+        setComponent(() => null);
+        setError(e);
+        return forceUpdate();
       }
     })();
-  }, [uri, global, globalName, setComponent, verify]);
-
-  if (Component) {
-    return <Component {...extras} />;
-  } else if (typeof renderLoading === 'function') {
-    return renderLoading();
+  }, [open, source, setComponent, forceUpdate, setError]);
+  const FallbackComponent = React.useCallback((): JSX.Element => {
+    return renderError({ error: new Error('[Wormhole]: Failed to render.') });
+  }, [renderError]);
+  if (typeof Component === 'function') {
+    return (
+      <ErrorBoundary FallbackComponent={FallbackComponent}>
+        <Component {...extras} />
+      </ErrorBoundary>
+    );
+  } else if (error) {
+    return renderError({ error });
   }
-  return null;
+  return renderLoading();
 }
