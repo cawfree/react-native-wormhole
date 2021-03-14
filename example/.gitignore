@@ -61,6 +61,3 @@ buck-out/
 # Expo
 .expo/*
 web-build/
-
-# Fixtures
-fixtures/dist

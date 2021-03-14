@@ -1,32 +1,13 @@
-import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React from 'react';
+import { createWormhole } from 'react-native-wormhole';
 import localhost from 'react-native-localhost';
-import { PORT, SIGNER_ADDRESS } from '@env';
-import interopRequireDefault from '@babel/runtime/helpers/interopRequireDefault';
-import interopRequireWildcard from '@babel/runtime/helpers/interopRequireWildcard';
-import slicedToArray from '@babel/runtime/helpers/slicedToArray';
 import { ethers } from 'ethers';
 
-import { createWormhole } from './lib';
-import { AxiosResponse } from 'axios';
+import { SIGNER_ADDRESS, PORT } from '@env';
 
-const { Wormhole, Provider: Wormholes } = createWormhole({
-  global: {
-    require: (id: string) => {
-      if (id === 'react-native') {
-        return require('react-native');
-      } else if (id === 'react') {
-        return require('react');
-      } else if (id === '@babel/runtime/helpers/interopRequireWildcard') {
-        return interopRequireWildcard;
-      } else if (id === '@babel/runtime/helpers/interopRequireDefault') {
-        return interopRequireDefault;
-      } else if (id === '@babel/runtime/helpers/slicedToArray') {
-        return slicedToArray;
-      }
-      return null;
-    },
-  },
+import type { AxiosResponse } from 'axios';
+
+const { Provider, Wormhole } = createWormhole({
   verify: async ({ headers, data }: AxiosResponse) => {
     const signature = headers['x-csrf-token'];
     const bytes = ethers.utils.arrayify(signature);
@@ -41,28 +22,11 @@ const { Wormhole, Provider: Wormholes } = createWormhole({
 
 export default function App() {
   return (
-    <Wormholes>
-      <View style={styles.container}>
-        <Wormhole source={{ uri: `http://${localhost}:${PORT}/hello` }} />
-        <Wormhole source={{ uri: `http://${localhost}:${PORT}/stateful` }} />
-        <Wormhole
-          dangerouslySetInnerJSX
-          source={'var _interopRequireWildcard=require("@babel/runtime/helpers/interopRequireWildcard");Object.defineProperty(exports,"__esModule",{value:true});exports.default=ExamplePlugin;var React=_interopRequireWildcard(require("react"));var _reactNative=require("react-native");var _jsxFileName="/Users/cawfree/Development/react-native-wormhole/example/fixtures/Hello.jsx";function ExamplePlugin(){return React.createElement(_reactNative.Text,{__self:this,__source:{fileName:_jsxFileName,lineNumber:5,columnNumber:10}},"I am a string!");}'}
-        />
-        <Wormhole
-          source={{ uri: `http://${localhost}:${PORT}/hello2` }}
-          renderError={({ error }) => <Text>{`${error.message}`}</Text>}
-        />
-      </View>
-    </Wormholes>
+    <Provider>
+      <Wormhole
+        source={{ uri: `http://${localhost}:${PORT}/__mocks__/Mock_1.jsx` }}
+        renderError={({ error }) => console.error(error) || null}
+      />
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

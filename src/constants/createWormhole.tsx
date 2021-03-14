@@ -1,5 +1,5 @@
 import * as React from 'react';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import {
   PromiseCallback,
@@ -10,6 +10,7 @@ import {
 } from '../@types';
 
 import { Wormhole as BaseWormhole } from '../components';
+import { WormholeProps } from '../components/Wormhole';
 
 export type WormholeProviderProps = {
   readonly children?: JSX.Element | readonly JSX.Element[] | string;
@@ -17,8 +18,8 @@ export type WormholeProviderProps = {
 
 const globalName = '__WORMHOLE__';
 
-function createProvider<T extends object>(
-  Context: React.Context<WormholeContextValue<T>>
+function createProvider(
+  Context: React.Context<WormholeContextValue>
 ) {
   return function WormholeProvider({
     children,
@@ -30,7 +31,7 @@ function createProvider<T extends object>(
       readonly [uri: string]: PromiseCallback<React.Component>[];
     }>(() => ({}), []);
     const baseContext = React.useContext(Context);
-    const { verify, global } = baseContext;
+    const { verify, global, buildRequestForUri } = baseContext;
     const shouldComplete = React.useCallback(
       (uri: string, error?: Error) => {
         const { [uri]: maybeComponent } = cache;
@@ -40,7 +41,9 @@ function createProvider<T extends object>(
           if (!!maybeComponent) {
             return resolve(maybeComponent);
           }
-          return reject(error);
+          return reject(
+            error || new Error(`[Wormhole]: Failed to allocate for uri "${uri}".`)
+          );
         });
       },
       [cache, tasks],
@@ -59,7 +62,7 @@ function createProvider<T extends object>(
     }, [global]);
     const shouldOpen = React.useCallback(async (uri: string) => {
       try {
-        const result = await axios({
+        const result = await buildRequestForUri({
           url: uri,
           method: 'get',
         });
@@ -82,7 +85,14 @@ function createProvider<T extends object>(
         }
         return shouldComplete(uri, e);
       }
-    }, [verify, shouldCreateComponent, cache, tasks, shouldComplete]);
+    }, [
+      verify,
+      shouldCreateComponent,
+      cache,
+      tasks,
+      shouldComplete,
+      buildRequestForUri,
+    ]);
     const openUri = React.useCallback(
       async (uri: string, callback: PromiseCallback<React.Component>) => {
         const { [uri]: Component } = cache;
@@ -142,22 +152,40 @@ function createProvider<T extends object>(
   }
 }
 
-export default function createWormhole<T extends object>({
-  global,
+export default function createWormhole({
+  buildRequestForUri = (config: AxiosRequestConfig) => axios(config),
+  global = {
+    require: (moduleId: string) => {
+      if (moduleId === 'react') {
+        // @ts-ignore
+        return require('react');
+      } else if (moduleId === 'react-native') {
+        // @ts-ignore
+        return require('react-native');
+      }
+      return null;
+    },
+  },
   verify,
-}: WormholeContextConfig<T>) {
-  const defaultValue: WormholeContextValue<T> = Object.freeze({
+}: WormholeContextConfig) {
+  if (typeof verify !== 'function') {
+    throw new Error(
+      '[Wormhole]: To create a Wormhole, you **must** pass a verify() function.',
+    );
+  }
+  const defaultValue: WormholeContextValue = Object.freeze({
+    buildRequestForUri,
     global,
     verify,
     open: () => Promise.reject(
       new Error('[Wormhole]: It looks like you\'ve forgotten to declare a Wormhole Provider.')
     ),
   });
-  const Context = React.createContext<WormholeContextValue<T>>(
+  const Context = React.createContext<WormholeContextValue>(
     defaultValue
   );
   const useWormhole = () => React.useContext(Context);
-  const Wormhole = (props) => (
+  const Wormhole = (props: WormholeProps) => (
     <BaseWormhole {...props} useWormhole={useWormhole} />
   );
   return Object.freeze({

@@ -9,7 +9,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "typeRoots": ["index.d.ts"],
     "moduleResolution": "node"
   }
 }

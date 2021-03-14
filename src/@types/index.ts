@@ -1,8 +1,8 @@
-import { AxiosResponse } from 'axios';
+import { AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type WormholeSource = {
   readonly uri: string;
-};
+} | string;
 
 export type WormholeOptions = {
   readonly dangerouslySetInnerJSX: boolean;
@@ -13,14 +13,16 @@ export type PromiseCallback<T> = {
   readonly reject: (error: Error) => void;
 };
 
-export type WormholeContextConfig<T extends object> = {
+export type WormholeContextConfig = {
   readonly verify: (response: AxiosResponse<string>) => Promise<boolean>;
-  readonly global: T;
+  readonly buildRequestForUri?: (config: AxiosRequestConfig) => AxiosPromise<string>;
+  readonly global?: any;
 };
 
-export type WormholeContextValue<T extends object> = WormholeContextConfig<T> & {
+export type WormholeContextValue = WormholeContextConfig & {
   readonly open: (
     uri: WormholeSource,
     options: WormholeOptions,
   ) => Promise<React.Component>;
+  readonly buildRequestForUri: (config: AxiosRequestConfig) => AxiosPromise<string>;
 };

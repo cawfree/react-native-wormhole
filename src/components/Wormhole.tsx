@@ -1,28 +1,29 @@
 import * as React from 'react';
-import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary } from 'react-error-boundary';
 
 import { WormholeContextValue, WormholeSource } from '../@types';
 import { useForceUpdate } from '../hooks';
 
-export type WormholeProps<T extends object> = {
+export type WormholeProps = {
   readonly source: WormholeSource;
-  readonly useWormhole: () => WormholeContextValue<T>;
+  readonly useWormhole?: () => WormholeContextValue;
   readonly renderLoading?: () => JSX.Element;
   readonly renderError?: (props: { readonly error: Error }) => JSX.Element;
   readonly dangerouslySetInnerJSX?: boolean;
 };
 
-export default function Wormhole<T extends object>({
+export default function Wormhole({
   source,
   useWormhole,
   renderLoading = () => <React.Fragment />,
   renderError = () => <React.Fragment />,
   dangerouslySetInnerJSX = false,
   ...extras
-}: WormholeProps<T>): JSX.Element {
+}: WormholeProps): JSX.Element {
+  // @ts-ignore
   const { open } = useWormhole();
   const { forceUpdate } = useForceUpdate();
-  const [Component, setComponent] = React.useState(null);
+  const [Component, setComponent] = React.useState<React.Component | null>(null);
   const [error, setError] = React.useState<Error | null>(null);
   React.useEffect(() => {
     (async () => {
@@ -42,6 +43,7 @@ export default function Wormhole<T extends object>({
   if (typeof Component === 'function') {
     return (
       <ErrorBoundary FallbackComponent={FallbackComponent}>
+        {/* @ts-ignore */}
         <Component {...extras} />
       </ErrorBoundary>
     );
