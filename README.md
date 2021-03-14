@@ -143,7 +143,9 @@ const { Provider, Wormhole } = createWormhole({
 });
 ```
 
-In this implementation, the server is expected to return a HTTP response header `x-csrf-token` whose value is a [`signedMessage`](https://docs.ethers.io/v5/api/signer/) of the response body. Here, the client computes the expected signing address of the served content using the digest stored in the header. If the recovered address is not trusted, the script **will not be executed**.
+In this implementation, the server is expected to return a HTTP response header `x-csrf-token` whose value is a [`signedMessage`](https://docs.ethers.io/v5/api/signer/) of the response body. Here, the client computes the expected signing address of the served content using the digest stored in the header.
+
+If the recovered address is not trusted, the script **will not be executed**.
 
 ### ✌️ License
 [**MIT**](./LICENSE)
