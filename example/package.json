@@ -9,7 +9,7 @@
     "react-native-localhost": "^1.0.0",
     "react-native-screens": "~2.15.0",
     "react-native-web": "~0.13.12",
-    "react-native-wormhole": "../"
+    "react-native-wormhole": "^0.1.0-alpha.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.10",
