@@ -117,6 +117,33 @@ const { Provider, Wormhole } = createWormhole({
 
 #### 🔏 Verification and Signing
 
+Calls to [`createWormhole`](./src/constants/createWormhole.tsx) must at a minimum provide a `verify` function, which has the following declaration:
+
+```typescript
+readonly verify: (response: AxiosResponse<string>) => Promise<boolean>;
+```
+
+This property is used to determine the integrity of a response, and is responsible for identifying whether remote content may be trusted for execution. If the `async` function does not return `true`, the request is terminated and the content will not be rendered via a `Wormhole`. In the [**Example App**](https://github.com/cawfree/react-native-wormhole/blob/bdb127b21e403dab1fb63894f5d6764a92a002d4/example/App.tsx#L11), we show how content can be signed to determine the authenticity of a response:
+
+```diff
++ import { ethers } from 'ethers';
++ import { SIGNER_ADDRESS, PORT } from '@env';
+
+const { Provider, Wormhole } = createWormhole({
++  verify: async ({ headers, data }: AxiosResponse) => {
++    const signature = headers['x-csrf-token'];
++    const bytes = ethers.utils.arrayify(signature);
++    const hash = ethers.utils.hashMessage(data);
++    const address = await ethers.utils.recoverAddress(
++      hash,
++      bytes
++    );
++    return address === SIGNER_ADDRESS;
++  },
+});
+```
+
+In this implementation, the server is expected to return a HTTP response header `x-csrf-token` whose value is a [`signedMessage`](https://docs.ethers.io/v5/api/signer/) of the response body. Here, the client computes the expected signing address of the served content using the digest stored in the header. If the recovered address is not trusted, the script **will not be executed**.
 
 ### ✌️ License
 [**MIT**](./LICENSE)
