@@ -89,5 +89,34 @@ export default function App() {
 
 And that's everything! Once our component has finished downloading, it'll be mounted and visible on screen. 🚀
 
+### 🔩 Configuration
+
+#### 🌎 Global Scope
+
+By default, a `Wormhole` is only capable of consuming global functionality from two different modules; [`react`](https://github.com/facebook/react) and [`react-native`](https://github.com/facebook/react-native), meaning that only "vanilla" React Native functionality is available. However, it is possible to introduce support for additional modules. In the snippet below, we show how to allow a `Wormhole` to render a [`WebView`](https://github.com/react-native-webview/react-native-webview):
+
+```diff
+const { Provider, Wormhole } = createWormhole({
++  global: {
++    require: (moduleId: string) => {
++      if (moduleId === 'react') {
++        return require('react');
++      } else if (moduleId === 'react-native') {
++        return require('react-native');
++      } else if (moduleId === 'react-native-webview') {
++        return require('react-native-webview);
++      }
++      return null;
++    },
++  },
+  verify: async () => true,
+});
+```
+
+> ⚠️  Version changes to `react`, `react-native` or any other dependencies your Wormholes consume may not be backwards-compatible. It's recommended that APIs serving content to requestors verify the compatibility of the requester version to avoid serving incompatible content. `react-native-wormhole` is **not** a package manager!
+
+#### 🔏 Verification and Signing
+
+
 ### ✌️ License
 [**MIT**](./LICENSE)
