@@ -207,7 +207,12 @@ export default function createWormhole({
     <BaseWormhole {...props} shouldOpenWormhole={shouldOpenWormhole} />
   );
 
+  const preload = async (uri: string): Promise<void> => {
+    await shouldOpenWormhole({ uri }, { dangerouslySetInnerJSX: false })
+  };
+
   return Object.freeze({
     Wormhole,
+    preload,
   });
 }

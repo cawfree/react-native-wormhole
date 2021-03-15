@@ -23,7 +23,6 @@ const { Wormhole } = createWormhole({
 export default function App() {
   return (
     <Wormhole
-      onError={console.error}
       source={{ uri: `http://${localhost}:${PORT}/__mocks__/Mock_1.jsx` }}
     />
   );

@@ -143,5 +143,23 @@ In this implementation, the server is expected to return a HTTP response header 
 
 If the recovered address is not trusted, the script **will not be executed**.
 
+#### 🏎️ Preloading
+
+Making a call to `createWormhole()` also returns a `preload` function which can be used to asynchronously cache remote JSX before a `Wormhole` has been mounted:
+
+```typescript
+const { preload } = createWormhole({ verify: async () => true });
+
+(async () => {
+  try {
+    await preload('https://cawfree.com/MyNewWormhole.jsx');
+  } catch (e) {
+    console.error('Failed to preload.');
+  }
+})();
+```
+
+Wormholes dependent upon the external content will subsequently render immediately if the operation has completed in time. Meanwhile, concurrent requests to the same resource will be deduped.
+
 ### ✌️ License
 [**MIT**](./LICENSE)
