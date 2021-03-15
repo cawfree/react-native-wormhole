@@ -39,7 +39,7 @@ function CustomButton() {
 }
 
 export default function MyNewWormhole() {
-  const message = React.useMemo('Hello, world!', []);
+  const message = React.useMemo(() => 'Hello, world!', []);
   return (
     <Animated.View style={{ flex: 1, backgroundColor: 'red' }}>
       <Animated.Text>{message}</Animated.Text>
@@ -53,7 +53,7 @@ export default function MyNewWormhole() {
 > 
 > By default, you can use all functionality exported by `react` and `react-native`. The only requirement is that you must `export default` the Component that you wish to have served through the `Wormhole`.
 
-Now our the component needs to be [**transpiled**](https://babeljs.io/docs/en/babel-cli). Below, we use [**Babel**](https://babeljs.io/) to convert `MyNewWormhole` into a format that can be executed at runtime:
+Now our component needs to be [**transpiled**](https://babeljs.io/docs/en/babel-cli). Below, we use [**Babel**](https://babeljs.io/) to convert `MyNewWormhole` into a format that can be executed at runtime:
 
 ```
 npx babel --presets=@babel/preset-env,@babel/preset-react MyNewWormhole.jsx -o MyNewWormhole.js
