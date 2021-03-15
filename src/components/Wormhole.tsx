@@ -21,7 +21,7 @@ export default function Wormhole({
   ...extras
 }: WormholeProps): JSX.Element {
   // @ts-ignore
-  const { open } = useWormhole();
+  const { open, onError } = useWormhole();
   const { forceUpdate } = useForceUpdate();
   const [Component, setComponent] = React.useState<React.Component | null>(null);
   const [error, setError] = React.useState<Error | null>(null);
@@ -33,10 +33,19 @@ export default function Wormhole({
       } catch (e) {
         setComponent(() => null);
         setError(e);
+        onError(e);
         return forceUpdate();
       }
     })();
-  }, [open, source, setComponent, forceUpdate, setError, dangerouslySetInnerJSX]);
+  }, [
+    open,
+    source,
+    setComponent,
+    forceUpdate,
+    setError,
+    dangerouslySetInnerJSX,
+    onError,
+  ]);
   const FallbackComponent = React.useCallback((): JSX.Element => {
     return renderError({ error: new Error('[Wormhole]: Failed to render.') });
   }, [renderError]);

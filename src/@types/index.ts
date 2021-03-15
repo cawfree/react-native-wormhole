@@ -25,4 +25,5 @@ export type WormholeContextValue = WormholeContextConfig & {
     options: WormholeOptions,
   ) => Promise<React.Component>;
   readonly buildRequestForUri: (config: AxiosRequestConfig) => AxiosPromise<string>;
+  readonly onError: (error: Error) => void;
 };

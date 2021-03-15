@@ -13,6 +13,7 @@ import { Wormhole as BaseWormhole } from '../components';
 import { WormholeProps } from '../components/Wormhole';
 
 export type WormholeProviderProps = {
+  readonly onError?: (error: Error) => void;
   readonly children?: JSX.Element | readonly JSX.Element[] | string;
 };
 
@@ -23,6 +24,7 @@ function createProvider(
 ) {
   return function WormholeProvider({
     children,
+    onError = console.error,
   }: WormholeProviderProps): JSX.Element {
     const cache = React.useMemo<{
       readonly [uri: string]: React.Component | null;
@@ -141,8 +143,8 @@ function createProvider(
       [openUri, openString],
     );
     const value = React.useMemo(
-      () => ({ ...baseContext, open }),
-      [baseContext, open],
+      () => ({ ...baseContext, open, onError }),
+      [baseContext, open, onError],
     );
     return (
       <Context.Provider value={value}>
@@ -180,6 +182,7 @@ export default function createWormhole({
     open: () => Promise.reject(
       new Error('[Wormhole]: It looks like you\'ve forgotten to declare a Wormhole Provider.')
     ),
+    onError: console.error,
   });
   const Context = React.createContext<WormholeContextValue>(
     defaultValue
