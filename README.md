@@ -3,7 +3,7 @@ A `Wormhole` allows your [⚛️ **React Native**](https://reactnative/dev) appl
 
 [🎬 **Watch the Demo!**](https://twitter.com/cawfree/status/1370809787294879746)
 
-> ⚠️ Implementors must take care to protect their Wormholes from **arbitrary code execution**. Insufficient protection will put your user's data and device at risk. 💀 Please see [**Signing and Verification**](https://github.com/cawfree/react-native-wormhole#-verification-and-signing) for more information.
+> ⚠️ Implementors must take care to protect their Wormholes from **arbitrary code execution**. Insufficient protection will put your user's data and device at risk. 💀 Please see [**Verification and Signing**](https://github.com/cawfree/react-native-wormhole#-verification-and-signing) for more information.
 
 ### 🚀 Getting Started
 
