@@ -7,7 +7,7 @@ import { SIGNER_ADDRESS, PORT } from '@env';
 
 import type { AxiosResponse } from 'axios';
 
-const { Provider, Wormhole } = createWormhole({
+const { Wormhole } = createWormhole({
   verify: async ({ headers, data }: AxiosResponse) => {
     const signature = headers['x-csrf-token'];
     const bytes = ethers.utils.arrayify(signature);
@@ -22,11 +22,9 @@ const { Provider, Wormhole } = createWormhole({
 
 export default function App() {
   return (
-    <Provider>
-      <Wormhole
-        source={{ uri: `http://${localhost}:${PORT}/__mocks__/Mock_1.jsx` }}
-        renderError={({ error }) => console.error(error) || null}
-      />
-    </Provider>
+    <Wormhole
+      onError={console.error}
+      source={{ uri: `http://${localhost}:${PORT}/__mocks__/Mock_1.jsx` }}
+    />
   );
 }
