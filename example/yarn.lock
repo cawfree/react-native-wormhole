@@ -6102,10 +6102,8 @@ react-native-web@~0.13.12:
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.4"
 
-react-native-wormhole@^0.1.0-alpha.0:
+react-native-wormhole@../:
   version "0.1.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/react-native-wormhole/-/react-native-wormhole-0.1.0-alpha.0.tgz#537213f0f16775def8773d8f7ddc75c975a68009"
-  integrity sha512-kQuaGued2E4c2MfFIXVdr5OSq3E5/pLEZQbrwI/RsjaVI9V7BgMBxFn4p8awZ/EkYUiP6+B08tyJezZxnOYOKQ==
   dependencies:
     "@babel/runtime" "^7.13.10"
     axios "^0.21.1"

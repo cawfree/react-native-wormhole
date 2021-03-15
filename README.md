@@ -74,16 +74,12 @@ Finally, let's render our `<App />`! For the purpose of this tutorial, let's ass
 import * as React from 'react';
 import { createWormhole } from 'react-native-wormhole';
 
-const { Provider, Wormhole } = createWormhole({
+const { Wormhole } = createWormhole({
   verify: async () => true,
 });
 
 export default function App() {
-  return (
-    <Provider>
-      <Wormhole source={{ uri: 'https://cawfree.com/MyNewWormhole.jsx' }} />
-    </Provider>
-  );
+  return <Wormhole source={{ uri: 'https://cawfree.com/MyNewWormhole.jsx' }} />;
 }
 ```
 
@@ -96,7 +92,7 @@ And that's everything! Once our component has finished downloading, it'll be mou
 By default, a `Wormhole` is only capable of consuming global functionality from two different modules; [`react`](https://github.com/facebook/react) and [`react-native`](https://github.com/facebook/react-native), meaning that only "vanilla" React Native functionality is available. However, it is possible to introduce support for additional modules. In the snippet below, we show how to allow a `Wormhole` to render a [`WebView`](https://github.com/react-native-webview/react-native-webview):
 
 ```diff
-const { Provider, Wormhole } = createWormhole({
+const { Wormhole } = createWormhole({
 +  global: {
 +    require: (moduleId: string) => {
 +      if (moduleId === 'react') {
@@ -129,7 +125,7 @@ This property is used to determine the integrity of a response, and is responsib
 + import { ethers } from 'ethers';
 + import { SIGNER_ADDRESS, PORT } from '@env';
 
-const { Provider, Wormhole } = createWormhole({
+const { Wormhole } = createWormhole({
 +  verify: async ({ headers, data }: AxiosResponse) => {
 +    const signature = headers['x-csrf-token'];
 +    const bytes = ethers.utils.arrayify(signature);
@@ -146,6 +142,24 @@ const { Provider, Wormhole } = createWormhole({
 In this implementation, the server is expected to return a HTTP response header `x-csrf-token` whose value is a [`signedMessage`](https://docs.ethers.io/v5/api/signer/) of the response body. Here, the client computes the expected signing address of the served content using the digest stored in the header.
 
 If the recovered address is not trusted, the script **will not be executed**.
+
+#### 🏎️ Preloading
+
+Making a call to `createWormhole()` also returns a `preload` function which can be used to asynchronously cache remote JSX before a `Wormhole` has been mounted:
+
+```typescript
+const { preload } = createWormhole({ verify: async () => true });
+
+(async () => {
+  try {
+    await preload('https://cawfree.com/MyNewWormhole.jsx');
+  } catch (e) {
+    console.error('Failed to preload.');
+  }
+})();
+```
+
+Wormholes dependent upon the external content will subsequently render immediately if the operation has completed in time. Meanwhile, concurrent requests to the same resource will be deduped.
 
 ### ✌️ License
 [**MIT**](./LICENSE)
