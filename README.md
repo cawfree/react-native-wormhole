@@ -143,7 +143,7 @@ In this implementation, the server is expected to return a HTTP response header 
 
 If the recovered address is not trusted, the script **will not be executed**.
 
-#### 🏎️ Preloading
+#### 🏎️  Preloading
 
 Making a call to `createWormhole()` also returns a `preload` function which can be used to asynchronously cache remote JSX before a `Wormhole` has been mounted:
 
