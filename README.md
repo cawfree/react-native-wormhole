@@ -1,5 +1,5 @@
 # 🌌 [`react-native-wormhole`](http://npmjs.com/package/react-native-wormhole)
-A `Wormhole` allows your [⚛️ **React Native**](https://reactnative/dev) application to consume components from a remote URL as if it were a local `import`, enabling them to easily become remotely configurable at runtime!
+A `Wormhole` allows your [⚛️ **React Native**](https://reactnative.dev) application to consume components from a remote URL as if it were a local `import`, enabling them to easily become remotely configurable at runtime!
 
 [🎬 **Watch the Demo!**](https://twitter.com/cawfree/status/1370809787294879746)
 
